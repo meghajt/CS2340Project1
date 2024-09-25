@@ -96,7 +96,17 @@
             markers.push(marker);
 
             google.maps.event.addListener(marker, 'click', () => {
-                infowindow.setContent(place.name + '<br>Rating: ' + place.rating);
+                infowindow.setContent(`
+                    <div>
+                        <strong>${place.name}</strong><br>
+                        Address: ${place.formatted_address}<br>
+                        Rating: ${place.rating}<br>
+                        Phone: ${place.formatted_phone_number}<br>
+                        Website: <a href="${place.website}" target="_blank">${place.website}</a><br>
+                        Open Now: ${place.opening_hours ? (place.opening_hours.isOpen() ? 'Yes' : 'No') : 'N/A'}<br>
+                        Price Level: ${place.price_level}<br>
+                    </div>
+                `);
                 infowindow.open(map, marker);
             });
         }
