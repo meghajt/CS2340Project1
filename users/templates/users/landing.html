@@ -10,6 +10,8 @@
             <input id="restaurant-input" type="text" placeholder="Enter a restaurant name or cuisine type">
             <input id="rating-filter" type="text" placeholder="Enter a minimum rating">
             <input id="distance-filter" type="text" placeholder="Enter a maximum distance in miles">
+
+
             <button onclick="searchRestaurants()">Search Restaurants</button>
         </div>
 
@@ -20,7 +22,7 @@
 
     <script>
         let map;
-        let placeService;
+        let service;
         let infowindow;
         let geocoder;
         let markers = [];
@@ -45,7 +47,7 @@
                 minRating = 5;
             }
 
-            geocoder.geocode({ 'address': locationInput }, function(results, status) {
+            geocoder.geocode({ 'address': locationInput }, (results, status) => {
                 if (status === google.maps.GeocoderStatus.OK) {
                     const location = results[0].geometry.location;
                     map.setCenter(location);
@@ -56,16 +58,16 @@
                         query: restaurantInput
                     };
 
-                    placeService = new google.maps.places.PlacesService(map);
-                    placeService.textSearch(request, function(results, status) {
+                    service = new google.maps.places.PlacesService(map);
+                    service.textSearch(request, (results, status) => {
                         if (status === google.maps.places.PlacesServiceStatus.OK) {
                             clearMarkers();
                             
+                            
                             const filteredResults = results
-                                const distance = google.maps.geometry.spherical.computeDistanceBetween(location, result.geometry.location);
-                                .filter(function(result) {
-                                    return result.rating >= minRating && distance <= maxDistance;
-                                });
+                                .filter(result => result.rating >= minRating);
+                                
+                                
 
                             for (let i = 0; i < filteredResults.length; i++) {
                                 createMarker(filteredResults[i]);
@@ -93,7 +95,7 @@
 
             markers.push(marker);
 
-            google.maps.event.addListener(marker, 'click', function() {
+            google.maps.event.addListener(marker, 'click', () => {
                 infowindow.setContent(place.name + '<br>Rating: ' + place.rating);
                 infowindow.open(map, marker);
             });
