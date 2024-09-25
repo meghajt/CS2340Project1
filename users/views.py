@@ -23,3 +23,4 @@ def register(request):
 def landing(request):
     return render(request, 'users/landing.html', {'username': request.user.username})
 # Create your views here.
+
