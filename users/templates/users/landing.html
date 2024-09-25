@@ -16,7 +16,7 @@
         <div id="map" style="height: 500px; width: 100%;"></div>
     </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPk9gIYRT86DoMATTsLjHBOUVR7jDVs70&libraries=places"></script>
 
     <script>
         let map;
@@ -62,8 +62,9 @@
                             clearMarkers();
                             
                             const filteredResults = results
+                                const distance = google.maps.geometry.spherical.computeDistanceBetween(location, result.geometry.location);
                                 .filter(function(result) {
-                                    return result.rating >= minRating;
+                                    return result.rating >= minRating && distance <= maxDistance;
                                 });
 
                             for (let i = 0; i < filteredResults.length; i++) {
