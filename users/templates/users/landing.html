@@ -62,8 +62,8 @@
                     service.textSearch(request, (results, status) => {
                         if (status === google.maps.places.PlacesServiceStatus.OK) {
                             clearMarkers();
-
-
+                            
+                            
                             const filteredResults = results
                                 .filter(result => result.rating >= minRating);
 
