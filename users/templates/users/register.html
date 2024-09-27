@@ -1,11 +1,65 @@
 {% extends "users/base.html" %}
 {% block content %}
+    <style>
+        /* Make heading dark red */
+        h2 {
+            color: darkred;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Ensure the page looks clean without too many layout changes */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9); /* Optional: Add background to the form area */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            margin: 50px auto; /* Center the form on the page */
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: darkred;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px; /* Add space between the buttons */
+        }
+
+        button:hover {
+            background-color: #a30000; /* Darken button on hover */
+        }
+
+        .login-btn {
+            background-color: #555; /* Different color for the login button */
+        }
+
+        .login-btn:hover {
+            background-color: #333; /* Darken login button on hover */
+        }
+
+        a {
+            color: darkred;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
     <div class="container">
         <h2>Register</h2>
         <form method="POST">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Register</button>
+            {{ form.as_p }} <!-- Renders Django form fields -->
+            <button type="submit">Register</button>
         </form>
+        <a href="{% url 'login' %}">
+            <button class="login-btn">Login</button>
+        </a>
     </div>
 {% endblock %}
