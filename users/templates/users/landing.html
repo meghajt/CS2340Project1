@@ -7,52 +7,78 @@
         
         <div>
             <input id="location-input" type="text" placeholder="Enter a location">
+            <input id="restaurant-input" type="text" placeholder="Enter a restaurant name or cuisine type">
+            <input id="rating-filter" type="text" placeholder="Enter a minimum rating">
+            <input id="distance-filter" type="text" placeholder="Enter a maximum distance in miles">
+
+
             <button onclick="searchRestaurants()">Search Restaurants</button>
         </div>
-        
+
         <div id="map" style="height: 500px; width: 100%;"></div>
     </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPk9gIYRT86DoMATTsLjHBOUVR7jDVs70&libraries=places,marker"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPk9gIYRT86DoMATTsLjHBOUVR7jDVs70&libraries=places"></script>
 
     <script>
         let map;
         let service;
         let infowindow;
+        let geocoder;
+        let markers = [];
 
         function initMap() {
-            
-            const atlanta = { lat: 33.7490, lng: -84.3880 };  // Default to Atlanta
+            const atlanta = { lat: 33.753746, lng: -84.386330 };
             map = new google.maps.Map(document.getElementById("map"), {
                 center: atlanta,
-                zoom: 13,
+                zoom: 10,
             });
-            
+
             infowindow = new google.maps.InfoWindow();
+            geocoder = new google.maps.Geocoder();
         }
 
         function searchRestaurants() {
-            const locationInput = document.getElementById("location-input").value;
-            const geocoder = new google.maps.Geocoder();
+            const locationInput = document.getElementById("location-input").value || 'atlanta';
+            const restaurantInput = document.getElementById("restaurant-input").value || 'restaurant';
+            const maxDistance = parseFloat(document.getElementById("distance-filter").value) * 1609.344 || 5000;
+            let minRating = parseFloat(document.getElementById("rating-filter").value) || 0.0;
+            if (minRating > 5) {
+                minRating = 5;
+            }
 
-        
-            geocoder.geocode({ address: locationInput }, function (results, status) {
+            geocoder.geocode({ 'address': locationInput }, (results, status) => {
                 if (status === google.maps.GeocoderStatus.OK) {
-                    map.setCenter(results[0].geometry.location);
+                    const location = results[0].geometry.location;
+                    map.setCenter(location);
 
-                    
                     const request = {
-                        location: results[0].geometry.location,
-                        radius: '5000',  
-                        type: ['restaurant']
+                        location: location,
+                        radius: maxDistance,
+                        query: restaurantInput
                     };
 
                     service = new google.maps.places.PlacesService(map);
-                    service.nearbySearch(request, function (results, status) {
+                    service.textSearch(request, (results, status) => {
                         if (status === google.maps.places.PlacesServiceStatus.OK) {
-                            for (let i = 0; i < results.length; i++) {
-                                createMarker(results[i]);
+                            clearMarkers();
+                            
+                            
+                            const filteredResults = results
+                                .filter(result => result.rating >= minRating);
+
+
+
+                            for (let i = 0; i < filteredResults.length; i++) {
+                                createMarker(filteredResults[i]);
                             }
+
+                            if (filteredResults.length > 0) {
+                                map.setCenter(location);
+                                map.setZoom(13);
+                            }
+                        } else {
+                            alert("No restaurants found for this location.");
                         }
                     });
                 } else {
@@ -63,17 +89,35 @@
 
         function createMarker(place) {
             const marker = new google.maps.Marker({
-                map: map,
-                position: place.geometry.location,
+                map,
+                position: place.geometry.location
             });
 
-            google.maps.event.addListener(marker, "click", function () {
-                infowindow.setContent(place.name);
-                infowindow.open(map, this);
+            markers.push(marker);
+
+            google.maps.event.addListener(marker, 'click', () => {
+                infowindow.setContent(`
+                    <div>
+                        <strong>${place.name}</strong><br>
+                        Address: ${place.formatted_address}<br>
+                        Rating: ${place.rating}<br>
+                        Phone: ${place.formatted_phone_number}<br>
+                        Website: <a href="${place.website}" target="_blank">${place.website}</a><br>
+                        Open Now: ${place.opening_hours ? (place.opening_hours.isOpen() ? 'Yes' : 'No') : 'N/A'}<br>
+                        Price Level: ${place.price_level}<br>
+                    </div>
+                `);
+                infowindow.open(map, marker);
             });
         }
 
-        
+        function clearMarkers() {
+            for (let i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+            markers = [];
+        }
+
         window.onload = initMap;
     </script>
 {% endblock %}
