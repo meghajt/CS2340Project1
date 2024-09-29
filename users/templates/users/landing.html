@@ -55,7 +55,18 @@
                     const request = {
                         location: location,
                         radius: maxDistance,
-                        query: restaurantInput
+                        query: restaurantInput,
+                        fields: [
+                            'name',
+                            'formatted_address',
+                            'international_phone_number',
+                            'website',
+                            'rating',
+                            'opening_hours',
+                            'price_level',
+                            'reviews',
+                            'types',
+                        ]
                     };
 
                     service = new google.maps.places.PlacesService(map);
@@ -97,15 +108,29 @@
 
             google.maps.event.addListener(marker, 'click', () => {
                 infowindow.setContent(`
-                    <div>
-                        <strong>${place.name}</strong><br>
-                        Address: ${place.formatted_address}<br>
-                        Rating: ${place.rating}<br>
-                        Phone: ${place.formatted_phone_number}<br>
-                        Website: <a href="${place.website}" target="_blank">${place.website}</a><br>
-                        Open Now: ${place.opening_hours ? (place.opening_hours.isOpen() ? 'Yes' : 'No') : 'N/A'}<br>
-                        Price Level: ${place.price_level}<br>
+                   <div>
+                    <strong>${place.name}</strong><br>
+                    <p><strong>Address:</strong> ${place.formatted_address}</p>
+                    <p><strong>Contact Information:</strong></p>
+                    <p>Phone: ${place.nationalPhoneNumber || 'N/A'}</p>
+                    <p>Website: <a href="${place.websiteUri || '#'}" target="_blank">${place.website || 'N/A'}</a></p>
+                    <p><strong>Cuisine Type:</strong> ${place.cuisine_type || 'N/A'}</p>
+                    <p><strong>Rating:</strong> ${place.rating || 'N/A'} (Based on Google Reviews)</p>
+                    <p><strong>Open Now:</strong> ${place.opening_hours ? (place.opening_hours.isOpen() ? 'Yes' : 'No') : 'N/A'}</p>
+                    <p><strong>Price Level:</strong> ${place.price_level || 'N/A'}</p>
+                    <p><strong>Reviews:</strong></p>
+                    <div id="restaurant-reviews">
+                        ${place.reviews && place.reviews.length > 0 
+                            ? place.reviews.map(review => `
+                                <div>
+                                    <strong>${review.author_name}</strong>: ${review.text} <br>
+                                    <em>Rating: ${review.rating}</em>
+                                </div>
+                            `).join('')
+                            : 'No reviews available.'}
                     </div>
+                    <div id="map-container" style="height: 300px; width: 100%;"></div> <!-- Placeholder for the map -->
+                </div>
                 `);
                 infowindow.open(map, marker);
             });
