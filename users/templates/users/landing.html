@@ -203,33 +203,41 @@
                 map: map,
                 position: place.geometry.location
             });
-
+        
             markers.push(marker);
-
+        
             google.maps.event.addListener(marker, 'click', function() {
-                selectedRestaurant = place;  // Assign the selected restaurant
-                document.getElementById('add-favorite-btn').style.display = 'block';  // Show the "Add to Favorites" button
-
-                var openNow = place.opening_hours && place.opening_hours.isOpen ? 'Yes' : 'N/A';
-                var website = place.website ? `<a href="${place.website}" target="_blank">${place.website}</a>` : 'N/A';
+                selectedRestaurant = place;
+                document.getElementById('add-favorite-btn').style.display = 'block';
+        
+                var website;
+                if (place.website) {
+                    website = '<a href="' + place.website + '" target="_blank">' + place.website + '</a>';
+                } else {
+                    website = 'N/A';
+                }
                 var phone = place.international_phone_number || 'N/A';
-
+                var cusine = detectCuisine(place);
+        
                 infowindow.setContent(
-                    `<div>
-                        <strong>${place.name}</strong><br>
-                        <p><strong>Address:</strong> ${place.formatted_address}</p>
-                        <p><strong>Phone:</strong> ${phone}</p>
-                        <p><strong>Website:</strong> ${website}</p>
-                        <p><strong>Rating:</strong> ${place.rating || 'N/A'} (Based on Google Reviews)</p>
-                        <p><strong>Open Now:</strong> ${openNow}</p>
-                        <p><strong>Price Level:</strong> ${place.price_level || 'N/A'}</p>
-                    </div>`
+                    '<div>' +
+                    '<strong>' + place.name + '</strong><br>' +
+                    '<p><strong>Address:</strong> ' + place.formatted_address + '</p>' +
+                    '<p><strong>Phone:</strong> ' + phone + '</p>' +
+                    '<p><strong>Website:</strong> ' + website + '</p>' +
+                    '<p><strong>Rating:</strong> ' + (place.rating || 'N/A') + ' (Based on Google Reviews)</p>' +
+                    '<p><strong>Cuisine:</strong> ' + cusine + '</p>' +
+                    '<p><strong>Price Level:</strong> ' + (place.price_level || 'N/A') + '</p>' +
+                    '<p><strong>Reviews:</strong></p>' +
+                    '<div id="restaurant-reviews">' +
+                     getReviewsHTML(place.reviews) +
+                    '</div>' +
+                    '</div>'
                 );
                 infowindow.open(map, marker);
             });
         }
-
-
+        
         function getReviewsHTML(reviews) {
             var reviewsHTML = '';
             if (reviews && reviews.length > 0) {
@@ -244,7 +252,6 @@
             }
             return reviewsHTML;
         }
-
 
         function clearMarkers() {
             for (var i = 0; i < markers.length; i++) {
