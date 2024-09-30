@@ -18,5 +18,7 @@ urlpatterns = [
          name='password_reset_confirm'),
     path('password-reset-complete/', 
          auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'), 
-         name='password_reset_complete'),  # Add this path for the landing page
+         name='password_reset_complete'),
+    path('add-favorite/', views.add_favorite, name='add_favorite'),
+    path('list-favorites/', views.list_favorites, name='list_favorites'),  # Add this path for the landing page
 ]
