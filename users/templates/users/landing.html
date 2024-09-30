@@ -15,6 +15,12 @@
         </div>
 
         <div id="map" style="height: 500px; width: 100%;"></div>
+        <!-- Button to add the restaurant to favorites -->
+        <button id="add-favorite-btn" style="display: none;" onclick="addFavorite()">Add to Favorites</button>  
+        <!-- Button to list all favorite restaurants -->
+        <a href="{% url 'list_favorites' %}">
+            <button>View My Favorite Restaurants</button>
+        </a>
     </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPk9gIYRT86DoMATTsLjHBOUVR7jDVs70&libraries=places"></script>
@@ -181,33 +187,28 @@
             markers.push(marker);
 
             google.maps.event.addListener(marker, 'click', function() {
-                var website;
-                if (place.website) {
-                    website = '<a href="' + place.website + '" target="_blank">' + place.website + '</a>';
-                } else {
-                    website = 'N/A';
-                }
+                selectedRestaurant = place;  // Assign the selected restaurant
+                document.getElementById('add-favorite-btn').style.display = 'block';  // Show the "Add to Favorites" button
+
+                var openNow = place.opening_hours && place.opening_hours.isOpen ? 'Yes' : 'N/A';
+                var website = place.website ? `<a href="${place.website}" target="_blank">${place.website}</a>` : 'N/A';
                 var phone = place.international_phone_number || 'N/A';
-                var cusine = detectCuisine(place);
 
                 infowindow.setContent(
-                    '<div>' +
-                    '<strong>' + place.name + '</strong><br>' +
-                    '<p><strong>Address:</strong> ' + place.formatted_address + '</p>' +
-                    '<p><strong>Phone:</strong> ' + phone + '</p>' +
-                    '<p><strong>Website:</strong> ' + website + '</p>' +
-                    '<p><strong>Rating:</strong> ' + (place.rating || 'N/A') + ' (Based on Google Reviews)</p>' +
-                    '<p><strong>Cuisine:</strong> ' + cusine + '</p>' +
-                    '<p><strong>Price Level:</strong> ' + (place.price_level || 'N/A') + '</p>' +
-                    '<p><strong>Reviews:</strong></p>' +
-                    '<div id="restaurant-reviews">' +
-                    getReviewsHTML(place.reviews) +
-                    '</div>' +
-                    '</div>'
+                    `<div>
+                        <strong>${place.name}</strong><br>
+                        <p><strong>Address:</strong> ${place.formatted_address}</p>
+                        <p><strong>Phone:</strong> ${phone}</p>
+                        <p><strong>Website:</strong> ${website}</p>
+                        <p><strong>Rating:</strong> ${place.rating || 'N/A'} (Based on Google Reviews)</p>
+                        <p><strong>Open Now:</strong> ${openNow}</p>
+                        <p><strong>Price Level:</strong> ${place.price_level || 'N/A'}</p>
+                    </div>`
                 );
                 infowindow.open(map, marker);
             });
         }
+
 
         function getReviewsHTML(reviews) {
             var reviewsHTML = '';
@@ -229,6 +230,45 @@
                 markers[i].setMap(null);
             }
             markers = [];
+        }
+
+        window.onload = initMap;
+        function addFavorite() {
+            if (selectedRestaurant) {
+                const csrftoken = getCookie('csrftoken');
+                fetch("{% url 'add_favorite' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        restaurant_name: selectedRestaurant.name,
+                        restaurant_address: selectedRestaurant.formatted_address
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        alert("Added to favorites!");
+                    } else {
+                        alert("Failed to add to favorites.");
+                    }
+                });
+            }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
 
         window.onload = initMap;
