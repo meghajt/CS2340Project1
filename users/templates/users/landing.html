@@ -95,7 +95,7 @@
                         }
                     });
                 } else {
-                    alert("Geocode was not successful for the following reason: " + status);
+                    alert("Geocode was failed: " + status);
                 }
             });
         }
@@ -103,7 +103,7 @@
         function getPlaceDetails(placeId) {
             var request = {
                 placeId: placeId,
-                fields: ['name', 'formatted_address', 'international_phone_number', 'website', 'rating', 'opening_hours', 'price_level', 'reviews', 'geometry']
+                fields: ['name', 'formatted_address', 'international_phone_number', 'website', 'rating', 'price_level', 'reviews', 'geometry']
             };
 
             service.getDetails(request, function(place, status) {
@@ -113,6 +113,65 @@
             });
         }
 
+        var cuisineKeywords = {
+            "Fast Food": ["mcdonald's", "burger king", "kfc", "subway", "taco bell", "wendy's", "chick-fil-a", "popeyes", "domino's",
+                "pizza hut", "dunkin", "starbucks", "sonic", "arby's", "five guys", "in-n-out", "chipotle", "jack in the box",
+                "hardee's", "carl's jr", "panera bread", "shake shack", "raising cane's", "panda express", "little caesars", "jersey mike's",
+                "jimmy john's", "culver's", "zaxby's", "whataburger"],
+            "Italian": ["italian", "pizza", "pasta", "lasagna", "spaghetti", "risotto", "gnocchi", "bruschetta"],
+            "Chinese": ["chinese", "dim sum", "noodle", "dumpling", "szechuan", "cantonese", "chow mein", "kung pao", "sweet and sour"],
+            "Indian": ["indian", "curry", "tandoori", "biryani", "naan", "masala", "paneer", "samosa", "dal", "chutney"],
+            "Mexican": ["mexican", "taco", "burrito", "quesadilla", "enchilada", "fajita", "guacamole", "tamale", "salsa", "tostada"],
+            "Japanese": ["japanese", "sushi", "ramen", "tempura", "teriyaki", "sashimi", "udon", "miso", "yakitori", "mochi"],
+            "Thai": ["thai", "pad thai", "curry", "tom yum", "papaya salad", "satay", "larb", "sticky rice"],
+            "French": ["french", "baguette", "croissant", "ratatouille", "crepe", "quiche", "bouillabaisse", "escargot", "souffle"],
+            "Greek": ["greek", "gyro", "tzatziki", "souvlaki", "moussaka", "spanakopita", "feta", "dolmades", "baklava"],
+            "Mediterranean": ["mediterranean", "hummus", "falafel", "tabbouleh", "shawarma", "kebab", "pita", "baba ghanoush"],
+            "Korean": ["korean", "kimchi", "bulgogi", "bibimbap", "galbi", "korean bbq", "soju", "gochujang", "japchae"],
+            "Vietnamese": ["vietnamese", "pho", "banh mi", "spring rolls", "bun", "vermicelli", "bun cha", "fish sauce"],
+            "American": ["american", "burger", "steak", "bbq", "hot dog", "fries", "buffalo wings", "ribs", "grilled cheese"],
+            "Lebanese": ["lebanese", "kibbeh", "fattoush", "tabbouleh", "shawarma", "manakeesh", "kebbeh", "labneh"],
+            "Turkish": ["turkish", "doner", "baklava", "pide", "lahmacun", "kofte", "meze", "borek"],
+            "Spanish": ["spanish", "paella", "tapas", "churro", "gazpacho", "jamon", "tortilla", "sangria"],
+            "Caribbean": ["caribbean", "jerk chicken", "plantains", "rice and peas", "ackee", "saltfish", "curried goat", "patties"],
+            "Brazilian": ["brazilian", "feijoada", "churrasco", "picanha", "brigadeiro", "coxinha", "pao de queijo"],
+            "Ethiopian": ["ethiopian", "injera", "doro wat", "kitfo", "berbere", "shiro", "tibs", "teff"],
+            "Moroccan": ["moroccan", "couscous", "tagine", "harira", "bastilla", "mechoui", "ras el hanout"],
+            "German": ["german", "bratwurst", "sauerkraut", "pretzel", "schnitzel", "strudel", "spatzle", "knockwurst"],
+            "Russian": ["russian", "borscht", "pelmeni", "blini", "stroganoff", "pirozhki", "kvass", "shchi"],
+            "Cuban": ["cuban", "ropa vieja", "medianoche", "mojo", "yuca", "tostones", "picadillo", "lechon"],
+            "African": ["african", "jollof rice", "suya", "egusi", "piri piri", "fufu", "bunny chow", "bobotie", "sosaties"],
+            "Filipino": ["filipino", "adobo", "lumpia", "sinangag", "sisig", "lechon", "pancit", "halo-halo", "balut"],
+            "Peruvian": ["peruvian", "ceviche", "lomo saltado", "aji", "causa", "pachamanca", "anticucho"],
+            "Middle Eastern": ["middle eastern", "hummus", "falafel", "shawarma", "baba ghanoush", "tabbouleh", "kebabs", "baklava"],
+            "Portuguese": ["portuguese", "bacalhau", "pastel de nata", "piri piri", "caldo verde", "feijoada"],
+            "Argentinian": ["argentinian", "empanadas", "asado", "chimichurri", "mate", "dulce de leche"],
+            "Malaysian": ["malaysian", "nasi lemak", "satay", "laksa", "roti canai", "rendang", "mee goreng"],
+            "Singaporean": ["singaporean", "chicken rice", "laksa", "chili crab", "rojak", "mee goreng", "sambal"],
+            "Indonesian": ["indonesian", "nasi goreng", "satay", "rendang", "gado gado", "bakso", "sambal"],
+            "Australian": ["australian", "lamington", "meat pie", "vegemite", "pavlova", "barbie", "snag"],
+            "Hawaiian": ["hawaiian", "poke", "kalua pork", "loco moco", "spam musubi", "poi", "haupia"],
+            "Polish": ["polish", "pierogi", "kielbasa", "bigos", "zapiekanka", "barszcz"],
+            "Belgian": ["belgian", "waffle", "moules frites", "stoofvlees", "speculoos", "frikandel"],
+            "Swiss": ["swiss", "fondue", "raclette", "rosti", "chocolate", "schnitzel"],
+            "Swedish": ["swedish", "meatballs", "gravlax", "smorgasbord", "knäckebröd", "cinnamon bun"],
+            "Irish": ["irish", "stew", "bangers", "mash", "soda bread", "boxty", "colcannon"]
+        };
+        
+        function detectCuisine(place) {
+            var cuisine = "Unknown";
+            var lowerCaseName = place.name.toLowerCase();
+            for (var key in cuisineKeywords) {
+                for (var i = 0; i < cuisineKeywords[key].length; i++) {
+                    if (lowerCaseName.includes(cuisineKeywords[key][i])) {
+                        cuisine = key;
+                        break;
+                    }
+                }
+            }
+            return cuisine;
+        }
+        
         function createMarker(place) {
             var marker = new google.maps.Marker({
                 map: map,
@@ -122,12 +181,6 @@
             markers.push(marker);
 
             google.maps.event.addListener(marker, 'click', function() {
-                var openNow;
-                if (place.opening_hours && place.opening_hours.isOpen) {
-                    openNow = place.opening_hours.isOpen() ? 'Yes' : 'No';
-                } else {
-                    openNow = 'N/A';
-                }
                 var website;
                 if (place.website) {
                     website = '<a href="' + place.website + '" target="_blank">' + place.website + '</a>';
@@ -135,6 +188,7 @@
                     website = 'N/A';
                 }
                 var phone = place.international_phone_number || 'N/A';
+                var cusine = detectCuisine(place);
 
                 infowindow.setContent(
                     '<div>' +
@@ -143,7 +197,7 @@
                     '<p><strong>Phone:</strong> ' + phone + '</p>' +
                     '<p><strong>Website:</strong> ' + website + '</p>' +
                     '<p><strong>Rating:</strong> ' + (place.rating || 'N/A') + ' (Based on Google Reviews)</p>' +
-                    '<p><strong>Open Now:</strong> ' + openNow + '</p>' +
+                    '<p><strong>Cuisine:</strong> ' + cusine + '</p>' +
                     '<p><strong>Price Level:</strong> ' + (place.price_level || 'N/A') + '</p>' +
                     '<p><strong>Reviews:</strong></p>' +
                     '<div id="restaurant-reviews">' +
