@@ -16,56 +16,55 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            color: white; /* Optional: Change text color for better contrast */
+            color: white;
         }
 
         .login-box {
-            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
-            padding: 20px; /* Reduced padding for a smaller box */
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 280px; /* Width remains the same */
+            width: 280px;
             text-align: center;
         }
 
         h1 {
             color: black;
             font-family: 'Times New Roman', Times, serif;
-            font-size: 1.8rem; /* Reduced font size for a more compact heading */
-            margin-bottom: 15px; /* Space below the heading */
+            font-size: 1.8rem;
+            margin-bottom: 15px;
         }
 
         input[type="text"], input[type="password"] {
-            width: calc(100% - 22px); /* Adjust width to account for padding and border */
+            width: calc(100% - 22px);
             padding: 10px;
-            margin: 5px 0; /* Reduced margin for closer spacing */
+            margin: 5px 0;
             border: 1px solid #ddd;
             border-radius: 5px;
-            box-sizing: border-box; /* Include padding and border in the element's total width */
+            box-sizing: border-box;
         }
 
         input[type="password"] {
-            margin-bottom: 10px; /* Added margin for space between password and submit button */
+            margin-bottom: 10px;
         }
 
         button {
             width: 100%;
-            padding: 12px; /* Increased padding for larger text */
+            padding: 12px;
             background-color: black;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 18px; /* Larger text */
-            box-sizing: border-box; /* Include padding and border in the element's total width */
+            font-size: 18px;
         }
 
         button:hover {
-            background-color: #444; /* Slightly lighter on hover */
+            background-color: #444;
         }
 
         .register {
-            text-align: right; /* Aligns the register link to the right */
+            text-align: right;
             margin-top: 10px;
         }
 
@@ -81,10 +80,10 @@
 </head>
 <body>
     <div class="login-box">
-        <h1>Please Enter Your Username and Password Below</h1> <!-- Changed to h1 -->
-        <form action="http://localhost:8000/users/landing/" method="GET">
-            <input type="text" placeholder="Username" required>
-            <input type="password" placeholder="Password" required>
+        <h1>Please Enter Your Username and Password Below</h1>
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
             <button type="submit">Submit</button>
             <div class="register">
                 <li><a href="{% url 'register' %}">Register</a></li>
