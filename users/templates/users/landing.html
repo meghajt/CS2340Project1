@@ -4,7 +4,7 @@
     <div class="container">
         <h2>Hello, {{ username }}!</h2>
         <p>Welcome to your personalized landing page.</p>
-        
+
         <div>
             <input id="location-input" type="text" placeholder="Enter a location">
             <input id="restaurant-input" type="text" placeholder="Enter a restaurant name or cuisine type">
@@ -157,7 +157,7 @@
             "Swedish": ["swedish", "meatballs", "gravlax", "smorgasbord", "knäckebröd", "cinnamon bun"],
             "Irish": ["irish", "stew", "bangers", "mash", "soda bread", "boxty", "colcannon"]
         };
-        
+
         function detectCuisine(place) {
             var cuisine = "Unknown";
             var lowerCaseName = place.name.toLowerCase();
@@ -171,7 +171,7 @@
             }
             return cuisine;
         }
-        
+
         function createMarker(place) {
             var marker = new google.maps.Marker({
                 map: map,
