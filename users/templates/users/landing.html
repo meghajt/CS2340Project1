@@ -11,7 +11,6 @@
             <input id="rating-filter" type="text" placeholder="Enter a minimum rating">
             <input id="distance-filter" type="text" placeholder="Enter a maximum distance in miles">
 
-
             <button onclick="searchRestaurants()">Search Restaurants</button>
         </div>
 
@@ -56,33 +55,20 @@
                         location: location,
                         radius: maxDistance,
                         query: restaurantInput,
-                        fields: [
-                            'name',
-                            'formatted_address',
-                            'international_phone_number',
-                            'website',
-                            'rating',
-                            'opening_hours',
-                            'price_level',
-                            'reviews',
-                            'types',
-                        ]
+                        fields: ['place_id', 'name', 'geometry']
                     };
 
                     service = new google.maps.places.PlacesService(map);
                     service.textSearch(request, (results, status) => {
                         if (status === google.maps.places.PlacesServiceStatus.OK) {
                             clearMarkers();
-                            
-                            
-                            const filteredResults = results
-                                .filter(result => result.rating >= minRating);
 
+                            const filteredResults = results.filter(result => result.rating >= minRating);
 
-
-                            for (let i = 0; i < filteredResults.length; i++) {
-                                createMarker(filteredResults[i]);
-                            }
+                            filteredResults.forEach(place => {
+                                // Fetch detailed information for each place
+                                getPlaceDetails(place.place_id);
+                            });
 
                             if (filteredResults.length > 0) {
                                 map.setCenter(location);
@@ -98,6 +84,19 @@
             });
         }
 
+        function getPlaceDetails(placeId) {
+            const request = {
+                placeId: placeId,
+                fields: ['name', 'formatted_address', 'international_phone_number', 'website', 'rating', 'opening_hours', 'price_level', 'reviews', 'geometry']
+            };
+
+            service.getDetails(request, (place, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    createMarker(place);
+                }
+            });
+        }
+
         function createMarker(place) {
             const marker = new google.maps.Marker({
                 map,
@@ -107,30 +106,31 @@
             markers.push(marker);
 
             google.maps.event.addListener(marker, 'click', () => {
+                const openNow = place.opening_hours ? (place.opening_hours.isOpen() ? 'Yes' : 'No') : 'N/A';
+                const website = place.website ? `<a href="${place.website}" target="_blank">${place.website}</a>` : 'N/A';
+                const phone = place.international_phone_number || 'N/A';
+
                 infowindow.setContent(`
-                   <div>
-                    <strong>${place.name}</strong><br>
-                    <p><strong>Address:</strong> ${place.formatted_address}</p>
-                    <p><strong>Contact Information:</strong></p>
-                    <p>Phone: ${place.nationalPhoneNumber || 'N/A'}</p>
-                    <p>Website: <a href="${place.websiteUri || '#'}" target="_blank">${place.website || 'N/A'}</a></p>
-                    <p><strong>Cuisine Type:</strong> ${place.cuisine_type || 'N/A'}</p>
-                    <p><strong>Rating:</strong> ${place.rating || 'N/A'} (Based on Google Reviews)</p>
-                    <p><strong>Open Now:</strong> ${place.opening_hours ? (place.opening_hours.isOpen() ? 'Yes' : 'No') : 'N/A'}</p>
-                    <p><strong>Price Level:</strong> ${place.price_level || 'N/A'}</p>
-                    <p><strong>Reviews:</strong></p>
-                    <div id="restaurant-reviews">
-                        ${place.reviews && place.reviews.length > 0 
-                            ? place.reviews.map(review => `
-                                <div>
-                                    <strong>${review.author_name}</strong>: ${review.text} <br>
-                                    <em>Rating: ${review.rating}</em>
-                                </div>
-                            `).join('')
-                            : 'No reviews available.'}
+                    <div>
+                        <strong>${place.name}</strong><br>
+                        <p><strong>Address:</strong> ${place.formatted_address}</p>
+                        <p><strong>Phone:</strong> ${phone}</p>
+                        <p><strong>Website:</strong> ${website}</p>
+                        <p><strong>Rating:</strong> ${place.rating || 'N/A'} (Based on Google Reviews)</p>
+                        <p><strong>Open Now:</strong> ${openNow}</p>
+                        <p><strong>Price Level:</strong> ${place.price_level || 'N/A'}</p>
+                        <p><strong>Reviews:</strong></p>
+                        <div id="restaurant-reviews">
+                            ${place.reviews && place.reviews.length > 0 
+                                ? place.reviews.map(review => `
+                                    <div>
+                                        <strong>${review.author_name}</strong>: ${review.text} <br>
+                                        <em>Rating: ${review.rating}</em>
+                                    </div>
+                                `).join('') 
+                                : 'No reviews available.'}
+                        </div>
                     </div>
-                    <div id="map-container" style="height: 300px; width: 100%;"></div> <!-- Placeholder for the map -->
-                </div>
                 `);
                 infowindow.open(map, marker);
             });
