@@ -34,3 +34,28 @@ class CustomUserCreationForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'security_question', 'security_answer']
 
+class CustomPasswordResetForm(forms.Form):
+    email = forms.EmailField()
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)
+    security_question = forms.CharField(max_length=255)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get('email')
+        first_name = cleaned_data.get('first_name')
+        last_name = cleaned_data.get('last_name')
+        security_question = cleaned_data.get('security_question')
+
+        # Check if the user with the provided email exists
+        try:
+            user = User.objects.get(email=email)
+            if user.first_name != first_name or user.last_name != last_name:
+                raise forms.ValidationError("Name details don't match our records.")
+            if not hasattr(user, 'profile') or user.profile.security_question != security_question:
+                raise forms.ValidationError("Security question doesn't match.")
+        except User.DoesNotExist:
+            raise forms.ValidationError("User with this email does not exist.")
+        
+        return cleaned_data
+

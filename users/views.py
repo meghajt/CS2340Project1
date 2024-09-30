@@ -1,15 +1,18 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from .forms import UserRegisterForm, CustomUserCreationForm
+from .forms import UserRegisterForm, CustomUserCreationForm, FavoriteRestaurantForm, ReviewForm, CustomPasswordResetForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import FavoriteRestaurantForm
 from .models import FavoriteRestaurant, Review, UserProfile
 from django.http import JsonResponse
-from .forms import ReviewForm
 import json
+from django.contrib.auth import views as auth_views
+from django.urls import reverse_lazy
 
-
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    form_class = CustomPasswordResetForm
+    template_name = 'users/password_reset.html'
+    success_url = reverse_lazy('password_reset_done')
 
 def home(request):
     return render(request, 'users/home.html')
@@ -86,6 +89,3 @@ def all_reviews(request):
     reviews = Review.objects.all()  # Get all reviews from all users
     return render(request, 'users/all_reviews.html', {'reviews': reviews})
 
-def custom_password_reset(request):
-    if request.method == 'POST':
-        email = request.POST.get
