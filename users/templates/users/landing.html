@@ -5,22 +5,42 @@
         <h2>Hello, {{ username }}!</h2>
         <p>Welcome to your personalized landing page.</p>
 
+        <!-- Restaurant Search Section -->
         <div>
             <input id="location-input" type="text" placeholder="Enter a location">
             <input id="restaurant-input" type="text" placeholder="Enter a restaurant name or cuisine type">
             <input id="rating-filter" type="text" placeholder="Enter a minimum rating">
             <input id="distance-filter" type="text" placeholder="Enter a maximum distance in miles">
-
             <button onclick="searchRestaurants()">Search Restaurants</button>
         </div>
 
         <div id="map" style="height: 500px; width: 100%;"></div>
-        <!-- Button to add the restaurant to favorites -->
-        <button id="add-favorite-btn" style="display: none;" onclick="addFavorite()">Add to Favorites</button>  
-        <!-- Button to list all favorite restaurants -->
+
+        <!-- Button to Add Restaurant to Favorites -->
+        <button id="add-favorite-btn" style="display: none;" onclick="addFavorite()">Add to Favorites</button>
+
+        <!-- Button to View Favorite Restaurants -->
         <a href="{% url 'list_favorites' %}">
             <button>View My Favorite Restaurants</button>
         </a>
+
+        <!-- Section to Write a Review -->
+        <div>
+            <h3>Write a Review for a Restaurant</h3>
+            <a href="{% url 'write_review' %}"><button>Write a Review</button></a>
+        </div>
+
+        <!-- Section to View Reviews -->
+        <div>
+            <h3>Your Reviews</h3>
+            <a href="{% url 'list_reviews' %}"><button>View My Reviews</button></a>
+        </div>
+
+        <div>
+            <h3>View All User Reviews</h3>
+            <a href="{% url 'all_reviews' %}"><button>View All Reviews</button></a>
+        </div>
+
     </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPk9gIYRT86DoMATTsLjHBOUVR7jDVs70&libraries=places"></script>
@@ -224,6 +244,7 @@
             }
             return reviewsHTML;
         }
+
 
         function clearMarkers() {
             for (var i = 0; i < markers.length; i++) {

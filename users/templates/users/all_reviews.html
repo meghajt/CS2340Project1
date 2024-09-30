@@ -1,0 +1,16 @@
+{% extends "users/base.html" %}
+
+{% block content %}
+    <h2>All User Reviews</h2>
+    <ul>
+        {% for review in reviews %}
+            <li>
+                <strong>{{ review.restaurant_name }}</strong> - {{ review.rating }}/5 by {{ review.user.username }}
+                <br>{{ review.review_text }}
+                <br><em>Reviewed by {{ review.user.first_name }} {{ review.user.last_name }}</em>
+            </li>
+        {% empty %}
+            <li>No reviews yet.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

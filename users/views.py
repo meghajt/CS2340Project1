@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from .forms import UserRegisterForm
+from .forms import UserRegisterForm, CustomUserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import FavoriteRestaurantForm
-from .models import FavoriteRestaurant
+from .models import FavoriteRestaurant, Review, UserProfile
 from django.http import JsonResponse
+from .forms import ReviewForm
 import json
 
 
@@ -15,14 +16,21 @@ def home(request):
 
 def register(request):
     if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            messages.success(request, f'Your account has been created!')
-            return redirect('home')  # Redirect to home or wherever you'd like
+            # Create user profile
+            UserProfile.objects.create(
+                user=user,
+                first_name=form.cleaned_data.get('first_name'),
+                last_name=form.cleaned_data.get('last_name'),
+                security_question=form.cleaned_data.get('security_question'),
+                security_answer=form.cleaned_data.get('security_answer')
+            )
+            return redirect('login')
     else:
-        form = UserRegisterForm()
+        form = CustomUserCreationForm()
+
     return render(request, 'users/register.html', {'form': form})
 
 def landing(request):
@@ -55,3 +63,29 @@ def list_favorites(request):
     favorites = FavoriteRestaurant.objects.filter(user=request.user)
     return render(request, 'users/list_favorites.html', {'favorites': favorites})
 
+@login_required
+def write_review(request):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.save()
+            return redirect('list_reviews')
+    else:
+        form = ReviewForm()
+
+    return render(request, 'users/write_review.html', {'form': form})
+
+@login_required
+def list_reviews(request):
+    reviews = Review.objects.filter(user=request.user)
+    return render(request, 'users/list_reviews.html', {'reviews': reviews})
+
+def all_reviews(request):
+    reviews = Review.objects.all()  # Get all reviews from all users
+    return render(request, 'users/all_reviews.html', {'reviews': reviews})
+
+def custom_password_reset(request):
+    if request.method == 'POST':
+        email = request.POST.get
