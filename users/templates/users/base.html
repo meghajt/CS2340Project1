@@ -19,27 +19,69 @@
             margin: 0;
             font-size: 3rem;
         }
-        
+
         /* Home button styling */
-        header .home-button {
+        header .logout-button {
+            list-style: none;
+            position: absolute; /* Position it absolutely within the header */
+            top: 10px; /* Distance from the top */
+            right: 20px; /* Distance from the left */
+        }
+
+        header .logout-button a {
+            background-color: white;
+            color: darkred;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        header .logout-button a:hover {
+            background-color: #f5f5f5;
+        }
+
+        header .map-button {
             list-style: none;
             position: absolute; /* Position it absolutely within the header */
             top: 10px; /* Distance from the top */
             left: 20px; /* Distance from the left */
         }
 
-        header .home-button a {
+        header .map-button a {
             background-color: white;
             color: darkred;
-            padding: 5px 10px; /* Smaller padding for a smaller button */
+            padding: 5px 10px;
             text-decoration: none;
             border-radius: 5px;
             font-weight: bold;
-            font-size: 0.9rem; /* Slightly smaller font size */
+            font-size: 0.9rem;
         }
 
-        header .home-button a:hover {
-            background-color: #f5f5f5; /* Light gray hover effect */
+        header .map-button a:hover {
+            background-color: #f5f5f5;
+        }
+
+                header .favorite-button {
+            list-style: none;
+            position: absolute; /* Position it absolutely within the header */
+            top: 10px; /* Distance from the top */
+            left: 80px; /* Distance from the left */
+        }
+
+        header .favorite-button a {
+            background-color: white;
+            color: darkred;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        header .favorite-button a:hover {
+            background-color: #f5f5f5;
         }
 
         footer {
@@ -53,7 +95,10 @@
 <body>
     <header>
         <h1>Atlanta Food Finder</h1>
-        <li class="home-button"><a href="{% url 'home' %}">Home</a></li>
+        <li class="logout-button"><a href="{% url 'home' %}">Logout</a></li>
+        <li class="map-button"><a href="{% url 'landing' %}">Map</a></li>
+        <li class="favorite-button"><a href="{% url 'list_favorites' %}">Favorites</a></li>
+
     </header>
 
     <main>
@@ -62,7 +107,7 @@
     </main>
 
     <footer>
-        <p>© 2024 Atlanta Food Finder</p>
+        <p>Atlanta Food Finder: Rithik, Dhir, Meghaj, Dylan, Vinayak</p>
     </footer>
 </body>
 </html>

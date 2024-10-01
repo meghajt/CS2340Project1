@@ -1,9 +1,65 @@
 {% extends "users/base.html" %}
 
 {% block content %}
+    <style>
+        .container {
+            background-color: black; 
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+        }
+        
+        input[type="text"] {
+            width: 98%;
+            padding: 10px;
+            margin: 10px -5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: white;
+            outline: none;
+        }
+        
+        button {
+            background-color: darkred;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: red;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        #map {
+            height: 500px; 
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+    </style>
+
     <div class="container">
-        <h2>Hello, {{ username }}!</h2>
-        <p>Welcome to your personalized landing page.</p>
+        <h2 style="color: white;">Hello, {{ username }}!</h2>
+        <p style="color: white;">Welcome to your map!</p>
 
         <!-- Restaurant Search Section -->
         <div>
@@ -23,24 +79,21 @@
         <a href="{% url 'list_favorites' %}">
             <button>View My Favorite Restaurants</button>
         </a>
-
-        <!-- Section to Write a Review -->
+        
         <div>
-            <h3>Write a Review for a Restaurant</h3>
+            <h3 style="color: white;">Write a Review for a Restaurant</h3>
             <a href="{% url 'write_review' %}"><button>Write a Review</button></a>
         </div>
-
-        <!-- Section to View Reviews -->
+        
         <div>
-            <h3>Your Reviews</h3>
+            <h3 style="color: white;">Your Reviews</h3>
             <a href="{% url 'list_reviews' %}"><button>View My Reviews</button></a>
         </div>
 
         <div>
-            <h3>View All User Reviews</h3>
+            <h3 style="color: white;">View All User Reviews</h3>
             <a href="{% url 'all_reviews' %}"><button>View All Reviews</button></a>
         </div>
-
     </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPk9gIYRT86DoMATTsLjHBOUVR7jDVs70&libraries=places"></script>
@@ -121,7 +174,7 @@
                         }
                     });
                 } else {
-                    alert("Geocode was failed: " + status);
+                    alert("Geocode failed: " + status);
                 }
             });
         }

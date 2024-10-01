@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atlanta Food Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"> <!-- Roboto font -->
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', Arial, sans-serif; /* Updated font to Roboto */
             background-color: darkred;
-            background-image: url('{% static 'images/home-background.jpg' %}'); /* Use a background image */
+            background-image: url('{% static 'images/home-background.jpg' %}');
             background-size: cover;
             background-position: center;
             display: flex;
@@ -21,17 +22,19 @@
         }
 
         .home-box {
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(0, 0, 0, 0.8); /* Darkened to match login page */
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Darker shadow */
+            width: 320px;
             text-align: center;
         }
 
         h1 {
-            color: black;
-            font-family: 'Times New Roman', Times, serif;
+            color: white;
+            font-family: 'Roboto', Arial, sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
         }
 
         nav ul {
@@ -47,7 +50,7 @@
         nav ul li a {
             display: block;
             padding: 12px;
-            background-color: black;
+            background-color: #444; /* Same button styling as login page */
             color: white;
             border-radius: 5px;
             text-decoration: none;
@@ -55,7 +58,7 @@
         }
 
         nav ul li a:hover {
-            background-color: #444;
+            background-color: #666; /* Hover effect to match login page */
         }
     </style>
 </head>
