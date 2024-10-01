@@ -2,20 +2,20 @@
 {% block content %}
     <style>
         .map-container .map {
-            height: 500px; 
+            height: 500px;
             width: 100%;
             margin: 20px 0;
             border-radius: 10px;
             overflow: hidden;
         }
     </style>
-    
+
     <h2>Your Favorite Restaurants</h2>
     <ul>
         {% for favorite in favorites %}
             <li>
-                <a href="#" onclick="findRestaurant('{{ favorite.restaurant_address }}', '{{ favorite.restaurant_name }}', this)"> 
-                    {{ favorite.restaurant_name }} 
+                <a href="#" onclick="findRestaurant('{{ favorite.restaurant_address }}', '{{ favorite.restaurant_name }}', this)">
+                    {{ favorite.restaurant_name }}
                 </a> - {{ favorite.restaurant_address }}
                 <div class="map-container" style="display:none; margin-top: 10px;">
                     <div class="map" style="height: 500px; width: 100%;"></div>
@@ -57,7 +57,7 @@
             geocoder.geocode({ 'address': address }, function(results, status) {
                 if (status === google.maps.GeocoderStatus.OK) {
                     clearMarkers();
-                    
+
                     var location = results[0].geometry.location;
                     map = new google.maps.Map(mapDiv, {
                         center: location,
@@ -88,7 +88,7 @@
                 }
             });
         }
-        
+
         var cuisineKeywords = {
             "Fast Food": ["mcdonald's", "burger king", "kfc", "subway", "taco bell", "wendy's", "chick-fil-a", "popeyes", "domino's",
                 "pizza hut", "dunkin", "starbucks", "sonic", "arby's", "five guys", "in-n-out", "chipotle", "jack in the box",
@@ -147,7 +147,7 @@
             }
             return cuisine;
         }
-        
+
         function getPlaceDetails(placeId, marker) {
             var request = {
                 placeId: placeId,
@@ -156,7 +156,7 @@
 
             service.getDetails(request, function(place, status) {
                 if (status === google.maps.places.PlacesServiceStatus.OK) {
-                        
+
                     var website;
                     if (place.website) {
                         website = '<a href="' + place.website + '" target="_blank">' + place.website + '</a>';
@@ -165,7 +165,7 @@
                     }
                     var phone = place.international_phone_number || 'N/A';
                     var cusine = detectCuisine(place);
-                    
+
                     infowindow.setContent(
                         '<div>' +
                         '<strong>' + place.name + '</strong><br>' +
@@ -181,14 +181,14 @@
                         '</div>'
                     );
                     infowindow.open(map, marker);
-                    
+
                     google.maps.event.addListener(marker, 'click', function() {
                         infowindow.open(map, marker);
                     });
                 }
             });
         }
-        
+
         function getReviewsHTML(reviews) {
             var reviewsHTML = '';
             if (reviews && reviews.length > 0) {
