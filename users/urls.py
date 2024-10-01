@@ -22,5 +22,6 @@ urlpatterns = [
     path('write-review/', views.write_review, name='write_review'),
     path('list-reviews/', views.list_reviews, name='list_reviews'),
     path('all-reviews/', views.all_reviews, name='all_reviews'),
-    path('password-reset/', CustomPasswordResetView.as_view(), name='password_reset'),  # Add this path for the landing page
+    path('password-reset/', CustomPasswordResetView.as_view(), name='password_reset'),
+    path('profile/', views.profile, name='profile'),  # Add this path for the landing page
 ]

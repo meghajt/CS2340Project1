@@ -89,3 +89,16 @@ def all_reviews(request):
     reviews = Review.objects.all()  # Get all reviews from all users
     return render(request, 'users/all_reviews.html', {'reviews': reviews})
 
+@login_required
+def profile(request):
+    user = request.user
+    reviews_count = Review.objects.filter(user=user).count()
+    favorites_count = FavoriteRestaurant.objects.filter(user=user).count()
+
+    context = {
+        'user': user,
+        'reviews_count': reviews_count,
+        'favorites_count': favorites_count,
+    }
+    return render(request, 'users/profile.html', context)
+

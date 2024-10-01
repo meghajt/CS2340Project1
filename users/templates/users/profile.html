@@ -1,0 +1,15 @@
+{% extends "users/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h2>User Profile</h2>
+        <ul>
+            <li><strong>Username:</strong> {{ user.username }}</li>
+            <li><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</li>
+            <li><strong>Email:</strong> {{ user.email }}</li>
+            <li><strong>Number of Reviews:</strong> {{ reviews_count }}</li>
+            <li><strong>Number of Favorited Restaurants:</strong> {{ favorites_count }}</li>
+        </ul>
+        <a href="{% url 'landing' %}">Back to Landing Page</a>
+    </div>
+{% endblock %}
