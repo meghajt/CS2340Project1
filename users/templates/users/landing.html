@@ -1,6 +1,71 @@
 {% extends "users/base.html" %}
 
 {% block content %}
+    <style>
+        /* General Container */
+        .container {
+            background-color: black; 
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+        }
+
+        /* Text Color */
+        h2, h3, p {
+            color: white; /* Set text color to white */
+        }
+
+        /* Input Fields */
+        input[type="text"] {
+            width: 98%;
+            padding: 10px;
+            margin: 10px -5px;
+            border: 1px solid #ccc; /* Light border */
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: white; /* Gold color on focus */
+            outline: none; /* Remove default outline */
+        }
+
+        /* Buttons */
+        button {
+            background-color: darkred; /* Gold background */
+            color: white; /* White text */
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%; /* Full width for buttons */
+        }
+
+        button:hover {
+            background-color: red;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Map Container */
+        #map {
+            height: 500px; 
+            width: 100%;
+            margin: 20px 0; /* Space around the map */
+            border-radius: 10px;
+            overflow: hidden; /* Rounded corners */
+        }
+    </style>
+
     <div class="container">
         <h2>Hello, {{ username }}!</h2>
         <p>Welcome to your personalized landing page.</p>
@@ -14,7 +79,7 @@
             <button onclick="searchRestaurants()">Search Restaurants</button>
         </div>
 
-        <div id="map" style="height: 500px; width: 100%;"></div>
+        <div id="map"></div>
 
         <!-- Button to Add Restaurant to Favorites -->
         <button id="add-favorite-btn" style="display: none;" onclick="addFavorite()">Add to Favorites</button>
@@ -40,7 +105,6 @@
             <h3>View All User Reviews</h3>
             <a href="{% url 'all_reviews' %}"><button>View All Reviews</button></a>
         </div>
-
     </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPk9gIYRT86DoMATTsLjHBOUVR7jDVs70&libraries=places"></script>
@@ -151,106 +215,27 @@
             "Japanese": ["japanese", "sushi", "ramen", "tempura", "teriyaki", "sashimi", "udon", "miso", "yakitori", "mochi"],
             "Thai": ["thai", "pad thai", "curry", "tom yum", "papaya salad", "satay", "larb", "sticky rice"],
             "French": ["french", "baguette", "croissant", "ratatouille", "crepe", "quiche", "bouillabaisse", "escargot", "souffle"],
-            "Greek": ["greek", "gyro", "tzatziki", "souvlaki", "moussaka", "spanakopita", "feta", "dolmades", "baklava"],
-            "Mediterranean": ["mediterranean", "hummus", "falafel", "tabbouleh", "shawarma", "kebab", "pita", "baba ghanoush"],
-            "Korean": ["korean", "kimchi", "bulgogi", "bibimbap", "galbi", "korean bbq", "soju", "gochujang", "japchae"],
-            "Vietnamese": ["vietnamese", "pho", "banh mi", "spring rolls", "bun", "vermicelli", "bun cha", "fish sauce"],
-            "American": ["american", "burger", "steak", "bbq", "hot dog", "fries", "buffalo wings", "ribs", "grilled cheese"],
-            "Lebanese": ["lebanese", "kibbeh", "fattoush", "tabbouleh", "shawarma", "manakeesh", "kebbeh", "labneh"],
-            "Turkish": ["turkish", "doner", "baklava", "pide", "lahmacun", "kofte", "meze", "borek"],
-            "Spanish": ["spanish", "paella", "tapas", "churro", "gazpacho", "jamon", "tortilla", "sangria"],
-            "Caribbean": ["caribbean", "jerk chicken", "plantains", "rice and peas", "ackee", "saltfish", "curried goat", "patties"],
-            "Brazilian": ["brazilian", "feijoada", "churrasco", "picanha", "brigadeiro", "coxinha", "pao de queijo"],
-            "Ethiopian": ["ethiopian", "injera", "doro wat", "kitfo", "berbere", "shiro", "tibs", "teff"],
-            "Moroccan": ["moroccan", "couscous", "tagine", "harira", "bastilla", "mechoui", "ras el hanout"],
-            "German": ["german", "bratwurst", "sauerkraut", "pretzel", "schnitzel", "strudel", "spatzle", "knockwurst"],
-            "Russian": ["russian", "borscht", "pelmeni", "blini", "stroganoff", "pirozhki", "kvass", "shchi"],
-            "Cuban": ["cuban", "ropa vieja", "medianoche", "mojo", "yuca", "tostones", "picadillo", "lechon"],
-            "African": ["african", "jollof rice", "suya", "egusi", "piri piri", "fufu", "bunny chow", "bobotie", "sosaties"],
-            "Filipino": ["filipino", "adobo", "lumpia", "sinangag", "sisig", "lechon", "pancit", "halo-halo", "balut"],
-            "Peruvian": ["peruvian", "ceviche", "lomo saltado", "aji", "causa", "pachamanca", "anticucho"],
-            "Middle Eastern": ["middle eastern", "hummus", "falafel", "shawarma", "baba ghanoush", "tabbouleh", "kebabs", "baklava"],
-            "Portuguese": ["portuguese", "bacalhau", "pastel de nata", "piri piri", "caldo verde", "feijoada"],
-            "Argentinian": ["argentinian", "empanadas", "asado", "chimichurri", "mate", "dulce de leche"],
-            "Malaysian": ["malaysian", "nasi lemak", "satay", "laksa", "roti canai", "rendang", "mee goreng"],
-            "Singaporean": ["singaporean", "chicken rice", "laksa", "chili crab", "rojak", "mee goreng", "sambal"],
-            "Indonesian": ["indonesian", "nasi goreng", "satay", "rendang", "gado gado", "bakso", "sambal"],
-            "Australian": ["australian", "lamington", "meat pie", "vegemite", "pavlova", "barbie", "snag"],
-            "Hawaiian": ["hawaiian", "poke", "kalua pork", "loco moco", "spam musubi", "poi", "haupia"],
-            "Polish": ["polish", "pierogi", "kielbasa", "bigos", "zapiekanka", "barszcz"],
-            "Belgian": ["belgian", "waffle", "moules frites", "stoofvlees", "speculoos", "frikandel"],
-            "Swiss": ["swiss", "fondue", "raclette", "rosti", "chocolate", "schnitzel"],
-            "Swedish": ["swedish", "meatballs", "gravlax", "smorgasbord", "knäckebröd", "cinnamon bun"],
-            "Irish": ["irish", "stew", "bangers", "mash", "soda bread", "boxty", "colcannon"]
+            "Greek": ["greek", "gyro", "tzatziki", "souvlaki", "moussaka", "spanakopita", "feta", "baklava"],
+            "Mediterranean": ["mediterranean", "hummus", "falafel", "tabbouleh", "pita", "shawarma", "kebab", "grilled"],
+            "American": ["american", "burger", "steak", "bbq", "sandwich", "hot dog", "fried chicken", "cheesecake"]
         };
-
-        function detectCuisine(place) {
-            var cuisine = "Unknown";
-            var lowerCaseName = place.name.toLowerCase();
-            for (var key in cuisineKeywords) {
-                for (var i = 0; i < cuisineKeywords[key].length; i++) {
-                    if (lowerCaseName.includes(cuisineKeywords[key][i])) {
-                        cuisine = key;
-                        break;
-                    }
-                }
-            }
-            return cuisine;
-        }
 
         function createMarker(place) {
             var marker = new google.maps.Marker({
                 map: map,
-                position: place.geometry.location
+                position: place.geometry.location,
+                title: place.name
             });
-        
             markers.push(marker);
-        
+
             google.maps.event.addListener(marker, 'click', function() {
-                selectedRestaurant = place;
-                document.getElementById('add-favorite-btn').style.display = 'block';
-        
-                var website;
-                if (place.website) {
-                    website = '<a href="' + place.website + '" target="_blank">' + place.website + '</a>';
-                } else {
-                    website = 'N/A';
-                }
-                var phone = place.international_phone_number || 'N/A';
-                var cusine = detectCuisine(place);
-        
-                infowindow.setContent(
-                    '<div>' +
-                    '<strong>' + place.name + '</strong><br>' +
-                    '<p><strong>Address:</strong> ' + place.formatted_address + '</p>' +
-                    '<p><strong>Phone:</strong> ' + phone + '</p>' +
-                    '<p><strong>Website:</strong> ' + website + '</p>' +
-                    '<p><strong>Rating:</strong> ' + (place.rating || 'N/A') + ' (Based on Google Reviews)</p>' +
-                    '<p><strong>Cuisine:</strong> ' + cusine + '</p>' +
-                    '<p><strong>Price Level:</strong> ' + (place.price_level || 'N/A') + '</p>' +
-                    '<p><strong>Reviews:</strong></p>' +
-                    '<div id="restaurant-reviews">' +
-                     getReviewsHTML(place.reviews) +
-                    '</div>' +
-                    '</div>'
-                );
-                infowindow.open(map, marker);
+                infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
+                    'Address: ' + place.formatted_address + '<br>' +
+                    'Rating: ' + (place.rating ? place.rating : 'N/A') + '<br>' +
+                    'Phone: ' + (place.international_phone_number ? place.international_phone_number : 'N/A') + '<br>' +
+                    'Website: <a href="' + (place.website ? place.website : '#') + '">' + (place.website ? place.website : 'N/A') + '</a></div>');
+                infowindow.open(map, this);
             });
-        }
-        
-        function getReviewsHTML(reviews) {
-            var reviewsHTML = '';
-            if (reviews && reviews.length > 0) {
-                for (var i = 0; i < reviews.length; i++) {
-                    reviewsHTML += '<div>' +
-                        '<strong>' + reviews[i].author_name + '</strong>: ' + reviews[i].text + ' <br>' +
-                        '<em>Rating: ' + reviews[i].rating + '</em>' +
-                        '</div>';
-                }
-            } else {
-                reviewsHTML = 'No reviews available.';
-            }
-            return reviewsHTML;
         }
 
         function clearMarkers() {
@@ -258,45 +243,6 @@
                 markers[i].setMap(null);
             }
             markers = [];
-        }
-
-        window.onload = initMap;
-        function addFavorite() {
-            if (selectedRestaurant) {
-                const csrftoken = getCookie('csrftoken');
-                fetch("{% url 'add_favorite' %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: JSON.stringify({
-                        restaurant_name: selectedRestaurant.name,
-                        restaurant_address: selectedRestaurant.formatted_address
-                    })
-                }).then(response => {
-                    if (response.ok) {
-                        alert("Added to favorites!");
-                    } else {
-                        alert("Failed to add to favorites.");
-                    }
-                });
-            }
-        }
-
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
         }
 
         window.onload = initMap;
