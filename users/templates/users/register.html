@@ -1,60 +1,89 @@
-{% extends "users/base.html" %}
-{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <style>
-        /* Make heading dark red */
         h2 {
             color: darkred;
             font-family: 'Arial', sans-serif;
         }
-
-        /* Ensure the page looks clean without too many layout changes */
+        
         .container {
-            background-color: black; /* Solid black background */
+            background-color: black;
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             width: 400px;
-            margin: 50px auto; /* Center the form on the page */
-            color: white; /* Set text color to white */
+            margin: 50px auto;
+            color: white;
         }
 
         h2 {
-            color: white; /* Set heading color to white */
+            color: white;
         }
 
         button {
             width: 100%;
             padding: 12px;
             background-color: darkred;
-            color: white; /* Button text color */
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            margin-bottom: 10px; /* Add space between the buttons */
+            margin-bottom: 10px;
         }
 
         button:hover {
-            background-color: #a30000; /* Darken button on hover */
+            background-color: #a30000;
         }
 
         .login-btn {
-            background-color: #333; /* Different color for the login button */
+            background-color: #333;
         }
 
         .login-btn:hover {
-            background-color: #333; /* Darken login button on hover */
+            background-color: #333;
         }
 
         a {
-            color: white; /* Change link color to white */
+            color: white;
             text-decoration: none;
         }
 
         a:hover {
             text-decoration: underline;
         }
+        
+        header {
+            background-color: darkred;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 3rem;
+        }
+
+        footer {
+            background-color: darkred;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
     </style>
+</head>
+<body>
+    <header>
+        <h1>Atlanta Food Finder</h1>
+    </header>
 
     <div class="container">
         <h2>Register</h2>
@@ -67,4 +96,9 @@
             <button class="login-btn">Login</button>
         </a>
     </div>
-{% endblock %}
+
+    <footer>
+        <p>Atlanta Food Finder: Rithik, Dhir, Meghaj, Dylan, Vinayak</p>
+    </footer>
+</body>
+</html>
