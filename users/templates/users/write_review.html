@@ -1,7 +1,7 @@
 {% extends "users/base.html" %}
 
 {% block content %}
-    
+
     <style>
         input[type="range"] {
             width: 30%;
@@ -33,51 +33,57 @@
             cursor: not-allowed;
         }
     </style>
-    
+
     <h2>Write a Review</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.restaurant_name.label_tag }}
-        {{ form.restaurant_name }}
-        <br>
+       <form method="POST">
+            {% csrf_token %}
+            <div>
+                {{ form.restaurant_name.label_tag }}
+                {{ form.restaurant_name }}
+            </div>
+            
+            <div>
+                {{ form.rating.label_tag }}
+                {{ form.rating }}
+            </div>
+        
+            <div>
+                {{ form.review_text.label_tag }}
+                {{ form.review_text }}
+            </div>
+        
+            <br>
+        
+            <button type="submit">Submit Review</button>
+        </form>
 
-        {{ form.rating.label_tag }}
-        {{ form.rating }}
-        <span id="rating-value">5</span>
-        <br>
 
-        {{ form.review_text.label_tag }}
-        {{ form.review_text }}
-
-        <br>
-
-        <button type="submit">Submit Review</button>
-    </form>
-    
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPk9gIYRT86DoMATTsLjHBOUVR7jDVs70&libraries=places"></script>
 
     <script>
         function initAutocomplete() {
             const input = document.getElementById('id_restaurant_name');
-            
+
             const autocomplete = new google.maps.places.Autocomplete(input, {
                 types: ['restaurant'],
                 componentRestrictions: { country: "us" }
             });
-            
+
             autocomplete.addListener('place_changed', function () {
                 const place = autocomplete.getPlace();
             });
         }
-        
+
         document.addEventListener("DOMContentLoaded", function() {
             initAutocomplete();
-            const ratingSlider = document.getElementById('id_rating');
-            const ratingValueDisplay = document.getElementById('rating-value');
             
-            ratingSlider.addEventListener('input', function() {
-                ratingValueDisplay.textContent = ratingSlider.value;
+            document.querySelector('form').addEventListener('submit', function(event) {
+                const ratingValue = document.getElementById('id_rating').value;
+                console.log("Rating value before submit: " + ratingValue);
             });
         });
+
+
+
     </script>
 {% endblock %}
