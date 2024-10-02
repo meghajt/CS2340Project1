@@ -4,6 +4,13 @@ from django.contrib.auth.models import User
 from .models import FavoriteRestaurant
 from .models import Review
 
+security_questions = [
+    ('', 'Choose Security Question'),  # This makes it the default option
+    ('1', "What is your mother's maiden name?"),
+    ('2', 'What was the name of your first pet?'),
+    ('3', 'What was the make of your first car?')
+]
+
 class FavoriteRestaurantForm(forms.ModelForm):
     class Meta:
         model = FavoriteRestaurant
@@ -22,12 +29,21 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ['restaurant_name', 'rating', 'review_text']
+        labels = {
+            'restaurant_name': 'Restaurant Name',
+            'review_text': 'Review Text',
+        }
+        widgets = {
+            'restaurant_name': forms.TextInput(attrs={'style': 'width: 658px;', 'placeholder': 'Enter restaurant name'}),
+            'rating': forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '5', 'step': '.1', 'value': '5'}),
+            'review_text': forms.Textarea(attrs={'style': 'width: 794px; height: 200px;'}),
+        }
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
     email = forms.EmailField()
-    security_question = forms.CharField(max_length=255)
+    security_question = forms.ChoiceField(choices=security_questions, required=True)
     security_answer = forms.CharField(max_length=255)
 
     class Meta:
@@ -38,7 +54,7 @@ class CustomPasswordResetForm(forms.Form):
     email = forms.EmailField()
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
-    security_question = forms.CharField(max_length=255)
+    security_question = forms.ChoiceField(choices=security_questions, required=True)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -47,7 +63,6 @@ class CustomPasswordResetForm(forms.Form):
         last_name = cleaned_data.get('last_name')
         security_question = cleaned_data.get('security_question')
 
-        # Check if the user with the provided email exists
         try:
             user = User.objects.get(email=email)
             if user.first_name != first_name or user.last_name != last_name:

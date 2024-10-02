@@ -1,10 +1,83 @@
 {% extends "users/base.html" %}
 
 {% block content %}
+    
+    <style>
+        input[type="range"] {
+            width: 30%;
+        }
+        #rating-value {
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        button {
+            background-color: darkred;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: red;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+    
     <h2>Write a Review</h2>
     <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.restaurant_name.label_tag }}
+        {{ form.restaurant_name }}
+        <br>
+
+        {{ form.rating.label_tag }}
+        {{ form.rating }}
+        <span id="rating-value">5</span>
+        <br>
+
+        {{ form.review_text.label_tag }}
+        {{ form.review_text }}
+
+        <br>
+
         <button type="submit">Submit Review</button>
     </form>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPk9gIYRT86DoMATTsLjHBOUVR7jDVs70&libraries=places"></script>
+
+    <script>
+        function initAutocomplete() {
+            const input = document.getElementById('id_restaurant_name');
+            
+            const autocomplete = new google.maps.places.Autocomplete(input, {
+                types: ['restaurant'],
+                componentRestrictions: { country: "us" }
+            });
+            
+            autocomplete.addListener('place_changed', function () {
+                const place = autocomplete.getPlace();
+            });
+        }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            initAutocomplete();
+            const ratingSlider = document.getElementById('id_rating');
+            const ratingValueDisplay = document.getElementById('rating-value');
+            
+            ratingSlider.addEventListener('input', function() {
+                ratingValueDisplay.textContent = ratingSlider.value;
+            });
+        });
+    </script>
 {% endblock %}
