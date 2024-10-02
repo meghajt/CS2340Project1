@@ -12,7 +12,7 @@ class FavoriteRestaurant(models.Model):
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     restaurant_name = models.CharField(max_length=255)
-    rating = models.PositiveIntegerField(choices=[(i, i) for i in range(1, 6)])  # Rating from 1 to 5
+    rating = models.PositiveIntegerField(default=5, choices=[(i, i) for i in range(0, 6)])  # Rating from 1 to 5
     review_text = models.TextField()
 
     def __str__(self):
