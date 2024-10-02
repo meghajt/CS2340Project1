@@ -35,7 +35,7 @@ class ReviewForm(forms.ModelForm):
         }
         widgets = {
             'restaurant_name': forms.TextInput(attrs={'style': 'width: 658px;', 'placeholder': 'Enter restaurant name'}),
-            'rating': forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '5', 'step': '.1'}),
+            'rating': forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '5', 'step': '1'}),
             'review_text': forms.Textarea(attrs={'style': 'width: 794px; height: 200px;'}),
         }
 
